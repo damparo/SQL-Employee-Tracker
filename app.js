@@ -29,7 +29,7 @@ function addDRE () {
         type: "list",
         name: "updateDRE",
         message: "Would you like to add [department], [role], or [employee]?",
-        choices: ["department", "role", "employee", "exit"]
+        choices: ["department", "role", "employee", "display info", "exit"]
       }
     ]).then(function(response) {
       switch (response.updateDRE) {
@@ -41,6 +41,9 @@ function addDRE () {
           break;
         case "employee":
           addEMP();
+          break;
+        case "display info":
+          addDISPINF();
           break;
     
       }
@@ -61,7 +64,7 @@ function addDEPT () {
   }
   );
   console.log(query.sql);
-  // console.log(table);
+
 }
 
 function addROLE () {
@@ -80,7 +83,7 @@ function addROLE () {
   }
   );
   console.log(query.sql);
-  // console.log(table);
+ 
 }
 
 function addEMP () {
@@ -98,13 +101,93 @@ function addEMP () {
     addDRE();
   }
   );
-  // console.log(query.sql);
-  console.table(res);
+  console.log(query.sql);
 }
 
-// function queryEmpinfo() {
+function addDISPINF () {
+  inquirer
+  .prompt ([
+    {
+      type: "list",
+      name: "displayDRE",
+      message: "Would you like to view [department], [role], or [employee]?",
+      choices: ["department", "role", "employee", "exit"]
+    }
+  ]).then(function(response) {
+    switch (response.displayDRE) {
+      case "department":
+        dispDEPT();
+        break;
+      case "role":
+          dispROLE();
+          break;
+      case "employee":
+          dispEMP();
+          break;
+        
+      }
+    });
+  }
+  
+  function dispDEPT () {
+   
+    connection.query("SELECT * FROM  company_db.department", function(err, res) {
+      if (err) throw err;
+      console.table(res);
+    });
+   
+  }
+  function dispROLE () {
+   
+    connection.query("SELECT * FROM  company_db._role", function(err, res) {
+      if (err) throw err;
+      console.table(res);
+    });
+   
+  }
+  function dispEMP () {
+   
+    connection.query("SELECT * FROM  company_db._employee", function(err, res) {
+      if (err) throw err;
+      console.table(res);
+    });
+   
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // figure out query inside workbench then copy to js
+
+  // connection.query("SELECT * FROM _role", function(err, res) {
+  //   if (err) throw err;
+  //   console.table(res);
+  // });
+
+  // connection.query("SELECT * FROM _employee", function(err, res) {
+  //   if (err) throw err;
+  //   console.table(res);
+  // });
+
+
+
+
+
+
+// function afterConnection() {
 //   // figure out query inside workbench then copy to js
-//   connection.query("SELECT * FROM _employee", function(err, res) {
+//   connection.query("SELECT * FROM", function(err, res) {
 //     if (err) throw err;
 //     // console.log(res);
 //     console.table(res);
