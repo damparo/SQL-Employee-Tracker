@@ -29,7 +29,7 @@ function addDRE () {
         type: "list",
         name: "updateDRE",
         message: "Would you like to add [department], [role], or [employee]?",
-        choices: ["department", "role", "employee", "display info", "exit"]
+        choices: ["department", "role", "employee", "display info", "update Einfo", "exit"]
       }
     ]).then(function(response) {
       switch (response.updateDRE) {
@@ -43,7 +43,10 @@ function addDRE () {
           addEMP();
           break;
         case "display info":
-          addDISPINF();
+          disPLAYINF();
+          break;
+        case "update Einfo":
+          updateEINFO();
           break;
     
       }
@@ -91,7 +94,7 @@ function addEMP () {
     "INSERT INTO _employee SET ?",
   {
     first_name: "james",
-    last_name: "James",
+    last_name: "bond",
     role_id:"998",
     manager_id: "111"
   },
@@ -104,7 +107,7 @@ function addEMP () {
   console.log(query.sql);
 }
 
-function addDISPINF () {
+function disPLAYINF () {
   inquirer
   .prompt ([
     {
@@ -153,9 +156,69 @@ function addDISPINF () {
     });
    
   }
+
+  function updateEINFO() {
+  console.log("Updating employee roles...\n");
+  var query = connection.query(
+    "UPDATE _employee SET ? WHERE ?",
+
+
+    [
+      {
+        first_name: "wes",
+        last_name: "anderson",
+        role_id: 5,
+        manager_id: 5 
+      },
+      {
+        id: 4
+      }
+    ],
+    function(err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " _employee updated!\n");
+      // Call deleteProduct AFTER the UPDATE completes
+      // deleteProduct();
+    }
+  );
+
+  // logs the actual query being run
+  console.log(query.sql);
+}
+  
   
   
 
+
+
+
+
+
+
+  
+  // function updateProduct() {
+  //   console.log("Updating all Rocky Road quantities...\n");
+  //   var query = connection.query(
+  //     "UPDATE products SET ? WHERE ?",
+  //     [
+  //       {
+  //         quantity: 100
+  //       },
+  //       {
+  //         flavor: "Rocky Road"
+  //       }
+  //     ],
+  //     function(err, res) {
+  //       if (err) throw err;
+  //       console.log(res.affectedRows + " products updated!\n");
+  //       // Call deleteProduct AFTER the UPDATE completes
+  //       deleteProduct();
+  //     }
+  //   );
+  
+  //   // logs the actual query being run
+  //   console.log(query.sql);
+  // }
 
 
 
