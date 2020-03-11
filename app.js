@@ -28,7 +28,7 @@ function addDRE () {
       {
         type: "list",
         name: "updateDRE",
-        message: "Would you like to add [department], [role], or [employee]?",
+        message: "Would you like to add [department], [role], [employee], or view/update info?",
         choices: ["department", "role", "employee", "display info", "update Einfo", "exit"]
       }
     ]).then(function(response) {
@@ -165,24 +165,23 @@ function disPLAYINF () {
 
     [
       {
-        first_name: "wes",
-        last_name: "anderson",
-        role_id: 5,
+        first_name: "ridley",
+        last_name: "scott",
+        role_id: 3,
         manager_id: 5 
       },
       {
-        id: 4
+        id: 1
       }
     ],
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " _employee updated!\n");
-      // Call deleteProduct AFTER the UPDATE completes
-      // deleteProduct();
+      
     }
   );
 
-  // logs the actual query being run
+
   console.log(query.sql);
 }
   
