@@ -48,16 +48,34 @@ function addDRE () {
         case "update Einfo":
           updateEINFO();
           break;
-    
+        case "exit":
+            Exit();
+            break;
       }
     });
 }
 
-function addDEPT () {
+function Exit () {
+ console.log("bye");
+ process.exit()
+}
+
+
+async function addDEPT () {
+  const dept = await inquirer
+  .prompt ([
+    {
+      name: "typeofdept",
+      message: "Name of Department?"
+    }
+  ])
+  console.log(dept)
+
+
   var query = connection.query(
     "INSERT INTO department SET ?",
   {
-    department_name: "human resources",
+    department_name: dept.typeofdept
 
   },
   function(err, res) {
@@ -70,14 +88,34 @@ function addDEPT () {
 
 }
 
-function addROLE () {
+async function addROLE () {
+  const role = await inquirer
+  .prompt ([
+    {
+      name: "rolename",
+      message: "Name of role?"
+    },
+    {
+      name: "salary",
+      message: "Salary amount?"
+    },
+
+  ])
+  console.log(role)
+
+  const depts = connection.query("SELECT * FROM  company_db.department", function(err, res) {
+    if (err) throw err;
+   console.log(res[0].department_name)
+    return res;
+  });
+
+
   var query = connection.query(
     "INSERT INTO _role SET ?",
   {
-    title: "chemical engineer",
-    salary: "35",
-    department_id:"007"
-
+    title: role.rolename,
+    salary: role.salary,
+    department_id:"007"    
   },
   function(err, res) {
     if (err) throw err;
@@ -89,7 +127,7 @@ function addROLE () {
  
 }
 
-function addEMP () {
+ function addEMP () {
   var query = connection.query(
     "INSERT INTO _employee SET ?",
   {
@@ -138,6 +176,7 @@ function disPLAYINF () {
       if (err) throw err;
       console.table(res);
     });
+    addDRE();
    
   }
   function dispROLE () {
@@ -146,6 +185,7 @@ function disPLAYINF () {
       if (err) throw err;
       console.table(res);
     });
+    addDRE();
    
   }
   function dispEMP () {
@@ -154,6 +194,7 @@ function disPLAYINF () {
       if (err) throw err;
       console.table(res);
     });
+    addDRE();
    
   }
 
@@ -183,6 +224,7 @@ function disPLAYINF () {
 
 
   console.log(query.sql);
+  addDRE();
 }
   
   

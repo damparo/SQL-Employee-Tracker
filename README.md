@@ -9,7 +9,7 @@ The goal of this assignment was to create a command-line application that allowe
 3) Update employee roles
 
 within an emloyee tracker database.  
-[`https://drive.google.com/open?id=1sT-l1-ElJd7jKrl4Oj3aNGiVuXIlIUst`]
+[https://drive.google.com/open?id=1sT-l1-ElJd7jKrl4Oj3aNGiVuXIlIUst]
 
 ## Functionality
 
