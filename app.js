@@ -89,6 +89,24 @@ async function addDEPT () {
 }
 
 async function addROLE () {
+  let decisions;
+  const depts = connection.query("SELECT * FROM  company_db.department", function(err, res) {
+    if (err) throw err;
+  
+  decisions = res.map(department => (
+     
+    {
+    name: department.department_name,
+    value: department.id
+    }
+    )
+    )
+    // console.log(decisions)
+
+    
+    
+  });
+  
   const role = await inquirer
   .prompt ([
     {
@@ -99,15 +117,16 @@ async function addROLE () {
       name: "salary",
       message: "Salary amount?"
     },
+    {
+      name: "department",
+      type: "list",
+      message: "Which department to add new role?",
+      choices: [decisions]
+    }
 
   ])
   console.log(role)
 
-  const depts = connection.query("SELECT * FROM  company_db.department", function(err, res) {
-    if (err) throw err;
-   console.log(res[0].department_name)
-    return res;
-  });
 
 
   var query = connection.query(
@@ -115,7 +134,7 @@ async function addROLE () {
   {
     title: role.rolename,
     salary: role.salary,
-    department_id:"007"    
+    department_id: role.department    
   },
   function(err, res) {
     if (err) throw err;
@@ -228,74 +247,3 @@ function disPLAYINF () {
 }
   
   
-  
-
-
-
-
-
-
-
-  
-  // function updateProduct() {
-  //   console.log("Updating all Rocky Road quantities...\n");
-  //   var query = connection.query(
-  //     "UPDATE products SET ? WHERE ?",
-  //     [
-  //       {
-  //         quantity: 100
-  //       },
-  //       {
-  //         flavor: "Rocky Road"
-  //       }
-  //     ],
-  //     function(err, res) {
-  //       if (err) throw err;
-  //       console.log(res.affectedRows + " products updated!\n");
-  //       // Call deleteProduct AFTER the UPDATE completes
-  //       deleteProduct();
-  //     }
-  //   );
-  
-  //   // logs the actual query being run
-  //   console.log(query.sql);
-  // }
-
-
-
-
-
-
-
-
-
-
-
-
-  // figure out query inside workbench then copy to js
-
-  // connection.query("SELECT * FROM _role", function(err, res) {
-  //   if (err) throw err;
-  //   console.table(res);
-  // });
-
-  // connection.query("SELECT * FROM _employee", function(err, res) {
-  //   if (err) throw err;
-  //   console.table(res);
-  // });
-
-
-
-
-
-
-// function afterConnection() {
-//   // figure out query inside workbench then copy to js
-//   connection.query("SELECT * FROM", function(err, res) {
-//     if (err) throw err;
-//     // console.log(res);
-//     console.table(res);
-//     // connnection.end kills connection after response
-//     connection.end();
-//   });
-// }
