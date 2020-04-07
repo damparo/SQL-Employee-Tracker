@@ -12,26 +12,35 @@ var connection = mysql.createConnection({
 
   // Your password
   password: "",
-  database: "company_db"
+  database: "company_db",
 });
 
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
-  addDRE()
+  addDRE();
   // queryEmpinfo();
 });
 
-function addDRE () {
+function addDRE() {
   inquirer
-    .prompt ([
+    .prompt([
       {
         type: "list",
         name: "updateDRE",
-        message: "Would you like to add [department], [role], [employee], or view/update info?",
-        choices: ["department", "role", "employee", "display info", "update Einfo", "exit"]
-      }
-    ]).then(function(response) {
+        message:
+          "Would you like to add [department], [role], [employee], or view/update info?",
+        choices: [
+          "department",
+          "role",
+          "employee",
+          "display info",
+          "update Einfo",
+          "exit",
+        ],
+      },
+    ])
+    .then(function (response) {
       switch (response.updateDRE) {
         case "department":
           addDEPT();
@@ -49,201 +58,178 @@ function addDRE () {
           updateEINFO();
           break;
         case "exit":
-            Exit();
-            break;
+          Exit();
+          break;
       }
     });
 }
 
-function Exit () {
- console.log("bye");
- process.exit()
+function Exit() {
+  console.log("bye");
+  process.exit();
 }
 
-
-async function addDEPT () {
-  const dept = await inquirer
-  .prompt ([
+async function addDEPT() {
+  const dept = await inquirer.prompt([
     {
       name: "typeofdept",
-      message: "Name of Department?"
-    }
-  ])
-  console.log(dept)
-
+      message: "Name of Department?",
+    },
+  ]);
+  console.log(dept);
 
   var query = connection.query(
     "INSERT INTO department SET ?",
-  {
-    department_name: dept.typeofdept
-
-  },
-  function(err, res) {
-    if (err) throw err;
-    console.log(res.affectedRows);
-    addDRE();
-  }
+    {
+      department_name: dept.typeofdept,
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows);
+      addDRE();
+    }
   );
   console.log(query.sql);
-
 }
 
-async function addROLE () {
+async function addROLE() {
   let decisions;
-  const depts = connection.query("SELECT * FROM  company_db.department", function(err, res) {
-    if (err) throw err;
-  
-  decisions = res.map(department => (
-     
-    {
-    name: department.department_name,
-    value: department.id
-    }
-    )
-    )
-    // console.log(decisions)
 
-    
-    
-  });
-  
-  const role = await inquirer
-  .prompt ([
+  const depts = await connection.query(
+    "SELECT * FROM  company_db.department",
+    function (err, res) {
+      if (err) throw err;
+      const results = depts._results[0];
+
+      decisions = results.map(({id, department_name}) => ({
+        name: department_name,
+        value: id,
+      }));
+      // console.log(decisions);
+    }
+  );
+
+  const role = await inquirer.prompt([
     {
       name: "rolename",
-      message: "Name of role?"
+      message: "Name of role?",
     },
     {
       name: "salary",
-      message: "Salary amount?"
+      message: "Salary amount?",
     },
     {
       name: "department",
       type: "list",
       message: "Which department to add new role?",
-      choices: [decisions]
-    }
+      choices: decisions,
+    },
+  ]);
+  console.log(role);
 
-  ])
-  console.log(role)
-
-
-
-  var query = connection.query(
-    "INSERT INTO _role SET ?",
-  {
-    title: role.rolename,
-    salary: role.salary,
-    department_id: role.department    
-  },
-  function(err, res) {
-    if (err) throw err;
-    console.log(res.affectedRows);
-    addDRE();
-  }
-  );
-  console.log(query.sql);
- 
+  // var query = connection.query(
+  //   "INSERT INTO _role SET ?",
+  // {
+  //   title: role.rolename,
+  //   salary: role.salary,
+  //   department_id: role.department
+  // },
+  // function(err, res) {
+  //   if (err) throw err;
+  //   console.log(res.affectedRows);
+  //   addDRE();
+  // }
+  // );
+  // console.log(query.sql);
 }
 
- function addEMP () {
+function addEMP() {
   var query = connection.query(
     "INSERT INTO _employee SET ?",
-  {
-    first_name: "james",
-    last_name: "bond",
-    role_id:"998",
-    manager_id: "111"
-  },
-  function(err, res) {
-    if (err) throw err;
-    console.log(res.affectedRows);
-    addDRE();
-  }
+    {
+      first_name: "james",
+      last_name: "bond",
+      role_id: "998",
+      manager_id: "111",
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows);
+      addDRE();
+    }
   );
   console.log(query.sql);
 }
 
-function disPLAYINF () {
+function disPLAYINF() {
   inquirer
-  .prompt ([
-    {
-      type: "list",
-      name: "displayDRE",
-      message: "Would you like to view [department], [role], or [employee]?",
-      choices: ["department", "role", "employee", "exit"]
-    }
-  ]).then(function(response) {
-    switch (response.displayDRE) {
-      case "department":
-        dispDEPT();
-        break;
-      case "role":
+    .prompt([
+      {
+        type: "list",
+        name: "displayDRE",
+        message: "Would you like to view [department], [role], or [employee]?",
+        choices: ["department", "role", "employee", "exit"],
+      },
+    ])
+    .then(function (response) {
+      switch (response.displayDRE) {
+        case "department":
+          dispDEPT();
+          break;
+        case "role":
           dispROLE();
           break;
-      case "employee":
+        case "employee":
           dispEMP();
           break;
-        
       }
     });
-  }
-  
-  function dispDEPT () {
-   
-    connection.query("SELECT * FROM  company_db.department", function(err, res) {
-      if (err) throw err;
-      console.table(res);
-    });
-    addDRE();
-   
-  }
-  function dispROLE () {
-   
-    connection.query("SELECT * FROM  company_db._role", function(err, res) {
-      if (err) throw err;
-      console.table(res);
-    });
-    addDRE();
-   
-  }
-  function dispEMP () {
-   
-    connection.query("SELECT * FROM  company_db._employee", function(err, res) {
-      if (err) throw err;
-      console.table(res);
-    });
-    addDRE();
-   
-  }
+}
 
-  function updateEINFO() {
+function dispDEPT() {
+  connection.query("SELECT * FROM  company_db.department", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+  });
+  addDRE();
+}
+function dispROLE() {
+  connection.query("SELECT * FROM  company_db._role", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+  });
+  addDRE();
+}
+function dispEMP() {
+  connection.query("SELECT * FROM  company_db._employee", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+  });
+  addDRE();
+}
+
+function updateEINFO() {
   console.log("Updating employee roles...\n");
   var query = connection.query(
     "UPDATE _employee SET ? WHERE ?",
-
 
     [
       {
         first_name: "ridley",
         last_name: "scott",
         role_id: 3,
-        manager_id: 5 
+        manager_id: 5,
       },
       {
-        id: 1
-      }
+        id: 1,
+      },
     ],
-    function(err, res) {
+    function (err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " _employee updated!\n");
-      
     }
   );
-
 
   console.log(query.sql);
   addDRE();
 }
-  
-  
