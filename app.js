@@ -93,23 +93,23 @@ async function addDEPT() {
 }
 
 async function addROLE() {
-  let decisions;
-
   const depts = await connection.query(
     "SELECT * FROM  company_db.department",
     function (err, res) {
       if (err) throw err;
-      const results = depts._results[0];
-
-      decisions = results.map(({id, department_name}) => ({
-        name: department_name,
-        value: id,
+       const results = depts._results[0];
+      decisions = results.map((department) => ({
+        name: department.department_name,
+        value: department.id,
       }));
-      // console.log(decisions);
+      console.log(decisions);
+      promptRole(decisions);
     }
   );
+}
 
-  const role = await inquirer.prompt([
+async function promptRole(departments) {
+    const role = await inquirer.prompt([
     {
       name: "rolename",
       message: "Name of role?",
@@ -122,25 +122,24 @@ async function addROLE() {
       name: "department",
       type: "list",
       message: "Which department to add new role?",
-      choices: decisions,
+      choices: departments,
     },
   ]);
   console.log(role);
-
-  // var query = connection.query(
-  //   "INSERT INTO _role SET ?",
-  // {
-  //   title: role.rolename,
-  //   salary: role.salary,
-  //   department_id: role.department
-  // },
-  // function(err, res) {
-  //   if (err) throw err;
-  //   console.log(res.affectedRows);
-  //   addDRE();
-  // }
-  // );
-  // console.log(query.sql);
+  var query = connection.query(
+    "INSERT INTO _role SET ?",
+  {
+    title: role.rolename,
+    salary: role.salary,
+    department_id: role.department
+  },
+  function(err, res) {
+    if (err) throw err;
+    console.log(res.affectedRows);
+    addDRE();
+  }
+  );
+  console.log(query.sql);
 }
 
 function addEMP() {
