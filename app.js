@@ -249,28 +249,123 @@ function dispEMP() {
   addDRE();
 }
 
-function updateEINFO() {
-  console.log("Updating employee roles...\n");
-  var query = connection.query(
-    "UPDATE _employee SET ? WHERE ?",
 
-    [
-      {
-        first_name: "ridley",
-        last_name: "scott",
-        role_id: 3,
-        manager_id: 5,
-      },
-      {
-        id: 1,
-      },
-    ],
+
+async function updateEINFO() {
+  const emps = await connection.query(
+    "SELECT * FROM  company_db._employee",
     function (err, res) {
       if (err) throw err;
-      console.log(res.affectedRows + " _employee updated!\n");
+       const results = emps._results[0];
+      decisions = results.map((_employee) => ({
+        name: _employee.first_name,
+	      name: _employee.last_name,
+	      value: _employee.role_id,
+	      value: _employee.manager_id,
+        value: _employee.id,
+      }));
+      // console.log(decisions);
+      promptEmployee(decisions);
     }
   );
-
-  console.log(query.sql);
-  addDRE();
 }
+
+
+async function promptEmployee(departments) {
+    const employee = await inquirer.prompt([
+    {
+      name: "firstname",
+      message: "what is the first name?",
+    },
+    {
+      name: "lastname",
+      message: "what is the last name?",
+    },
+	{
+      name: "roleID",
+      message: "what is the role ID?",
+    },
+	{
+      name: "managerID",
+      message: "what is the manager ID?",
+    },
+    {
+      name: "ID",
+      message: "what is the ID?",
+    },
+    // {
+    //   name: "department",
+    //   type: "list",
+    //   message: "Which department to add new employee?",
+    //   choices: departments,
+    // },
+  ]);
+  console.log(employee);
+  var query = connection.query(
+    "UPDATE _employee SET ?, ?, ?, ?, WHERE ?",
+  [
+  
+  {first_name: employee.firstname}, 
+  {last_name: employee.lastname},
+  {role_id: employee.roleID},
+  {manager_id: employee.managerID},
+  {id: employee.ID},
+
+  ],
+
+  function(err, res) {
+    if (err) throw err;
+    console.log(res.affectedRows);
+    addDRE();
+  }
+  );
+  console.log(query.sql);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function updateEINFO() {
+//   console.log("Updating employee roles...\n");
+//   var query = connection.query(
+//     "UPDATE _employee SET ? WHERE ?",
+
+//     [
+//       {
+//         first_name: "ridley",
+//         last_name: "scott",
+//         role_id: 3,
+//         manager_id: 5,
+//       },
+//       {
+//         id: 1,
+//       },
+//     ],
+//     function (err, res) {
+//       if (err) throw err;
+//       console.log(res.affectedRows + " _employee updated!\n");
+//     }
+//   );
+
+//   console.log(query.sql);
+//   addDRE();
+// }
