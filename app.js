@@ -302,14 +302,14 @@ async function promptEmployee(departments) {
   ]);
   console.log(employee);
   var query = connection.query(
-    "UPDATE _employee SET ?, ?, ?, ?, WHERE ?",
+    "UPDATE _employee SET first_name = ?, last_name = ?, role_id = ?, manager_id = ? WHERE id = ?",
   [
-  
-  {first_name: employee.firstname}, 
-  {last_name: employee.lastname},
-  {role_id: employee.roleID},
-  {manager_id: employee.managerID},
-  {id: employee.ID},
+    
+    employee.firstname, 
+    employee.lastname,
+    employee.roleID,
+    employee.managerID,
+    employee.ID,
 
   ],
 
