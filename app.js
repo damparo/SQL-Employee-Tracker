@@ -97,7 +97,7 @@ async function addROLE() {
     "SELECT * FROM  company_db.department",
     function (err, res) {
       if (err) throw err;
-       const results = depts._results[0];
+      const results = depts._results[0];
       decisions = results.map((department) => ({
         name: department.department_name,
         value: department.id,
@@ -109,7 +109,7 @@ async function addROLE() {
 }
 
 async function promptRole(departments) {
-    const role = await inquirer.prompt([
+  const role = await inquirer.prompt([
     {
       name: "rolename",
       message: "Name of role?",
@@ -128,28 +128,70 @@ async function promptRole(departments) {
   console.log(role);
   var query = connection.query(
     "INSERT INTO _role SET ?",
-  {
-    title: role.rolename,
-    salary: role.salary,
-    department_id: role.department
-  },
-  function(err, res) {
-    if (err) throw err;
-    console.log(res.affectedRows);
-    addDRE();
-  }
+    {
+      title: role.rolename,
+      salary: role.salary,
+      department_id: role.department,
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows);
+      addDRE();
+    }
   );
   console.log(query.sql);
 }
 
-function addEMP() {
+async function addEMP() {
+  const depts = await connection.query(
+    "SELECT * FROM  company_db.department",
+    function (err, res) {
+      if (err) throw err;
+      const results = depts._results[0];
+      decisions = results.map((department) => ({
+        name: department.department_name,
+        value: department.id,
+      }));
+      // console.log(decisions);
+      promptEmployee(decisions);
+    }
+  );
+}
+
+async function promptEmployee(departments) {
+  const employee = await inquirer.prompt([
+    {
+      name: "firstname",
+      message: "what is the first name?",
+    },
+    {
+      name: "lastname",
+      message: "what is the last name?",
+    },
+    {
+      name: "roleID",
+      message: "what is the role ID?",
+    },
+    {
+      name: "managerID",
+      message: "what is the manager ID?",
+    },
+
+    {
+      name: "department",
+      type: "list",
+      message: "Which department to add new employee?",
+      choices: departments,
+    },
+  ]);
+  console.log(employee);
   var query = connection.query(
     "INSERT INTO _employee SET ?",
     {
-      first_name: "james",
-      last_name: "bond",
-      role_id: "998",
-      manager_id: "111",
+      first_name: employee.firstname,
+      last_name: employee.lastname,
+      role_id: employee.roleID,
+      manager_id: employee.managerID,
     },
     function (err, res) {
       if (err) throw err;
