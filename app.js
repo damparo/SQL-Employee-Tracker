@@ -102,7 +102,7 @@ async function addROLE() {
         name: department.department_name,
         value: department.id,
       }));
-      console.log(decisions);
+      // console.log(decisions);
       promptRole(decisions);
     }
   );
